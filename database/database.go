@@ -12,7 +12,7 @@ const (
 	port     = 5432
 	user     = "sleepingnext"
 	password = "kevin99123"
-	dbname   = "products"
+	dbname   = "payments"
 )
 
 // OpenPostgresConnection is to connect to postgres database
