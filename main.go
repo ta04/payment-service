@@ -3,7 +3,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/SleepingNext/payment-service/database"
@@ -46,6 +45,6 @@ func main() {
 	// Run the service
 	err = s.Run()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 }

@@ -9,7 +9,28 @@ message Payment {
     int32 id = 1;
     int32 order_id  = 2;
     string type = 3;
-    bool status = 4;
+    string picture = 4;
+    string status = 5;
+}
+
+// User is a message for user
+message User {
+    int32 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string username = 4;
+    string password = 5;
+    string email_address = 6;
+    string phone_number = 7;
+    string date_of_birth = 8;
+    string address = 9;
+    string role = 10;
+    string credit_card_number = 11;
+    string credit_card_type = 12;
+    string credit_card_expired_month = 13;
+    string credit_card_expired_year = 14;
+    string credit_card_cvv = 15;
+    string status = 16;
 }
 
 // IndexPaymentRequest is a message for IndexPayments
@@ -32,6 +53,9 @@ message Error {
 service PaymentService {
     // IndexPayments is a method to index all payments
     rpc IndexPayments(IndexPaymentsRequest) returns (Response) {}
+
+    // IndexPaymentsByUserID is a method to index all payments by the user's id
+    rpc IndexPaymentsByUserID(User) returns (Response) {}
 
     // ShowPayment is a method to show a payment
     rpc ShowPayment(Payment) returns (Response) {}

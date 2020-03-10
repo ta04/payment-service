@@ -31,6 +31,18 @@ func (h *handler) IndexPayments(ctx context.Context, req *paymentPB.IndexPayment
 	return err
 }
 
+func (h *handler) IndexPaymentsByUserID(ctx context.Context, req *paymentPB.User, res *paymentPB.Response) error {
+	payments, err := h.repository.IndexByUserID(req)
+	if err != nil {
+		return err
+	}
+
+	res.Payments = payments
+	res.Error = nil
+
+	return err
+}
+
 func (h *handler) ShowPayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
 	payment, err := h.repository.Show(req)
 	if err != nil {
@@ -66,6 +78,7 @@ func (h *handler) UpdatePayment(ctx context.Context, req *paymentPB.Payment, res
 
 	return nil
 }
+
 
 func (h *handler) DestroyPayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
 	payment, err := h.repository.Destroy(req)

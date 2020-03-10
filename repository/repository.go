@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	Index() ([]*paymentPB.Payment, error)
+	IndexByUserID(*paymentPB.User) ([]*paymentPB.Payment, error)
 	Show(*paymentPB.Payment) (*paymentPB.Payment, error)
 	Store(*paymentPB.Payment) (*paymentPB.Payment, error)
 	Update(*paymentPB.Payment) (*paymentPB.Payment, error)
