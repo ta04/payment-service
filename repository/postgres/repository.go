@@ -10,14 +10,14 @@ import (
 
 func (repo *Repository) Store(payment *paymentPB.Payment) (*paymentPB.Payment, error) {
 	query := fmt.Sprintf("INSERT INTO payments (order_id, type, picture, status)"+
-		" VALUES ('%d', '%s', '%s', %s)", payment.OrderId, payment.Type, payment.Picture, payment.Status)
+		" VALUES ('%d', '%s', '%s', '%s')", payment.OrderId, payment.Type, payment.Picture, payment.Status)
 	_, err := repo.DB.Exec(query)
 
 	return payment, err
 }
 
 func (repo *Repository) Update(payment *paymentPB.Payment) (*paymentPB.Payment, error) {
-	query := fmt.Sprintf("UPDATE payments SET order_id = '%d', type = '%s', picture = %s, status = %s"+
+	query := fmt.Sprintf("UPDATE payments SET order_id = '%d', type = '%s', picture = %s, status = '%s'"+
 		" WHERE id = %d", payment.OrderId, payment.Type, payment.Picture, payment.Status, payment.Id)
 	_, err := repo.DB.Exec(query)
 
