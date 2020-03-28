@@ -5,10 +5,11 @@ package main
 import (
 	"context"
 	"errors"
+	"log"
+
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/metadata"
 	"github.com/micro/go-micro/server"
-	"log"
 
 	authPB "github.com/SleepingNext/auth-service/proto"
 	"github.com/SleepingNext/payment-service/database"
@@ -24,6 +25,7 @@ func main() {
 	s := micro.NewService(
 		micro.Name("com.ta04.srv.payment"),
 		micro.WrapHandler(AuthWrapper),
+		micro.Address(":50053"),
 	)
 
 	// Initialize the service
@@ -55,7 +57,6 @@ func main() {
 		log.Fatal(err)
 	}
 }
-
 
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, res interface{}) error {
