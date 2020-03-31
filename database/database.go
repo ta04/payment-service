@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	host     = "localhost"
+	host     = "skit-payment-service.c6pg0ooh5mrq.ap-southeast-1.rds.amazonaws.com"
 	port     = 5432
 	user     = "sleepingnext"
 	password = "kevin99123"
