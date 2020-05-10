@@ -1,26 +1,44 @@
-// payment-service/handler/handler.go
+/*
+Dear Programmers,
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*                                                 *
+*	This file belongs to Kevin Veros Hamonangan   *
+*	and	Fandi Fladimir Dachi and is a part of     *
+*	our	last project as the student of Del        *
+*	Institute of Technology, Sitoluama.           *
+*	Please contact us via Instagram:              *
+*	sleepingnext and fandi_dachi                  *
+*	before copying this file.                     *
+*	Thank you, buddy. 😊                          *
+*                                                 *
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
 
 package handler
 
 import (
 	"context"
 
-	paymentPB "github.com/SleepingNext/payment-service/proto"
-	paymentRepo "github.com/SleepingNext/payment-service/repository"
+	paymentPB "github.com/ta04/payment-service/proto"
+	paymentRepo "github.com/ta04/payment-service/repository"
 )
 
-type handler struct {
+// Handler is the handler of payment service
+type Handler struct {
 	repository paymentRepo.Repository
 }
 
-func NewHandler(repo paymentRepo.Repository) *handler {
-	return &handler{
+// NewHandler creates a new payment service handler
+func NewHandler(repo paymentRepo.Repository) *Handler {
+	return &Handler{
 		repository: repo,
 	}
 }
 
-func (h *handler) IndexPayments(ctx context.Context, req *paymentPB.IndexPaymentsRequest, res *paymentPB.Response) error {
-	payments, err := h.repository.Index()
+// IndexPayments indexes the payment
+func (h *Handler) IndexPayments(ctx context.Context, req *paymentPB.IndexPaymentsRequest, res *paymentPB.Response) error {
+	payments, err := h.repository.Index(req)
 	if err != nil {
 		return err
 	}
@@ -31,19 +49,8 @@ func (h *handler) IndexPayments(ctx context.Context, req *paymentPB.IndexPayment
 	return err
 }
 
-func (h *handler) IndexPaymentsByUserID(ctx context.Context, req *paymentPB.User, res *paymentPB.Response) error {
-	payments, err := h.repository.IndexByUserID(req)
-	if err != nil {
-		return err
-	}
-
-	res.Payments = payments
-	res.Error = nil
-
-	return err
-}
-
-func (h *handler) ShowPayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
+// ShowPayment shows a payment by ID
+func (h *Handler) ShowPayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
 	payment, err := h.repository.Show(req)
 	if err != nil {
 		return err
@@ -55,7 +62,21 @@ func (h *handler) ShowPayment(ctx context.Context, req *paymentPB.Payment, res *
 	return nil
 }
 
-func (h *handler) StorePayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
+// ShowPaymentByOrderID shows a payment by order ID
+func (h *Handler) ShowPaymentByOrderID(ctx context.Context, req *paymentPB.Order, res *paymentPB.Response) error {
+	payment, err := h.repository.ShowByOrderID(req)
+	if err != nil {
+		return err
+	}
+
+	res.Payment = payment
+	res.Error = nil
+
+	return nil
+}
+
+// StorePayment stores a new payment
+func (h *Handler) StorePayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
 	payment, err := h.repository.Store(req)
 	if err != nil {
 		return err
@@ -67,7 +88,8 @@ func (h *handler) StorePayment(ctx context.Context, req *paymentPB.Payment, res 
 	return err
 }
 
-func (h *handler) UpdatePayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
+// UpdatePayment updates a payment
+func (h *Handler) UpdatePayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
 	payment, err := h.repository.Update(req)
 	if err != nil {
 		return err
@@ -77,17 +99,4 @@ func (h *handler) UpdatePayment(ctx context.Context, req *paymentPB.Payment, res
 	res.Error = nil
 
 	return nil
-}
-
-
-func (h *handler) DestroyPayment(ctx context.Context, req *paymentPB.Payment, res *paymentPB.Response) error {
-	payment, err := h.repository.Destroy(req)
-	if err != nil {
-		return err
-	}
-
-	res.Payment = payment
-	res.Error = nil
-
-	return err
 }
