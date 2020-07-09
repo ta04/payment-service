@@ -15,18 +15,18 @@ Dear Programmers,
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-package repository
+package database
 
 import (
-	proto "github.com/ta04/payment-service/model/proto"
+	"database/sql"
+	"fmt"
+
+	"github.com/ta04/payment-service/internal/config"
 )
 
-// Repository is the interface of repositories.
-// As there are number of repositories can be used.
-type Repository interface {
-	GetAll(request *proto.GetAllPaymentsRequest) ([]*proto.Payment, error)
-	GetOneByOrderID(request *proto.GetOnePaymentRequest) (*proto.Payment, error)
-	GetOne(request *proto.GetOnePaymentRequest) (*proto.Payment, error)
-	CreateOne(payment *proto.Payment) (*proto.Payment, error)
-	UpdateOne(payment *proto.Payment) (*proto.Payment, error)
+// OpenPostgresConnection opens a connection to postgres database
+func OpenPostgresConnection() (*sql.DB, error) {
+	return sql.Open("postgres", fmt.Sprintf("host=%s port =%d user=%s password=%s dbname=%s sslmode=disable",
+		config.PostgresHost(), config.PostgresPort(), config.PostgresUser(),
+		config.PostgresPassword(), config.PostgresDBName()))
 }

@@ -23,11 +23,12 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-plugins/registry/consul"
-	"github.com/ta04/payment-service/config"
-	"github.com/ta04/payment-service/database"
-	"github.com/ta04/payment-service/handler"
-	paymentPB "github.com/ta04/payment-service/proto"
+	"github.com/ta04/payment-service/delivery/rpc/handler"
+	"github.com/ta04/payment-service/internal/config"
+	"github.com/ta04/payment-service/internal/database"
+	proto "github.com/ta04/payment-service/model/proto"
 	"github.com/ta04/payment-service/repository/postgres"
+	usecase "github.com/ta04/payment-service/usecase/v1"
 )
 
 func main() {
@@ -49,10 +50,12 @@ func main() {
 	}
 	defer db.Close()
 
-	h := handler.NewHandler(&postgres.Postgres{
-		DB: db,
-	})
-	paymentPB.RegisterPaymentServiceHandler(s.Server(), h)
+	p := postgres.NewPostgres(db)
+
+	u := usecase.NewUsecase(p)
+
+	h := handler.NewHandler(u)
+	proto.RegisterPaymentServiceHandler(s.Server(), h)
 
 	err = s.Run()
 	if err != nil {

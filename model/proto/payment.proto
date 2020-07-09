@@ -33,7 +33,14 @@ message Order {
     string status = 4;
 }
 
-message IndexPaymentsRequest {}
+message GetAllPaymentsRequest {
+    string status = 1;
+}
+
+message GetOnePaymentRequest {
+    int32 id = 1;
+    int32 order_id = 2;
+}
 
 message Response {
     Payment payment = 1;
@@ -42,18 +49,20 @@ message Response {
 }
 
 message Error {
-    string code = 1;
+    int32 code = 1;
     string message = 2;
 }
 
 service PaymentService {
-    rpc IndexPayments(IndexPaymentsRequest) returns (Response) {}
+    rpc GetAllPayments (GetAllPaymentsRequest) returns (Response) {
+    }
 
-    rpc ShowPayment(Payment) returns (Response) {}
-    
-    rpc ShowPaymentByOrderID(Order) returns (Response) {}
+    rpc GetOnePayment (GetOnePaymentRequest) returns (Response) {
+    }
 
-    rpc StorePayment(Payment) returns (Response) {}
+    rpc CreateOnePayment (Payment) returns (Response) {
+    }
 
-    rpc UpdatePayment(Payment) returns (Response) {}
+    rpc UpdateOnePayment (Payment) returns (Response) {
+    }
 }

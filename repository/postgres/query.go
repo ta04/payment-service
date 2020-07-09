@@ -21,7 +21,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	paymentPB "github.com/ta04/payment-service/proto"
+	proto "github.com/ta04/payment-service/model/proto"
 )
 
 // Postgres is the implementor of Postgres interface
@@ -29,13 +29,20 @@ type Postgres struct {
 	DB *sql.DB
 }
 
-// Index indexes all payments
-func (repo *Postgres) Index(req *paymentPB.IndexPaymentsRequest) (payments []*paymentPB.Payment, err error) {
+// NewPostgres will create a new postgres instance
+func NewPostgres(db *sql.DB) *Postgres {
+	return &Postgres{
+		DB: db,
+	}
+}
+
+// GetAll will get all payments
+func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments []*proto.Payment, err error) {
 	var id, orderID, paymentMethodID int32
 	var status string
 
-	query := "SELECT * FROM payments"
-	rows, err := repo.DB.Query(query)
+	query := fmt.Sprintf("SELECT * FROM payments WHERE status = '%s'", request.Status)
+	rows, err := postgres.DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +52,7 @@ func (repo *Postgres) Index(req *paymentPB.IndexPaymentsRequest) (payments []*pa
 		if err != nil {
 			return nil, err
 		}
-		payment := &paymentPB.Payment{
+		payment := &proto.Payment{
 			Id:              id,
 			OrderId:         orderID,
 			PaymentMethodId: paymentMethodID,
@@ -57,17 +64,17 @@ func (repo *Postgres) Index(req *paymentPB.IndexPaymentsRequest) (payments []*pa
 	return payments, err
 }
 
-// Show shows a payment by id
-func (repo *Postgres) Show(payment *paymentPB.Payment) (*paymentPB.Payment, error) {
+// GetOneByOrderID will get a payment by order id
+func (postgres *Postgres) GetOneByOrderID(request *proto.GetOnePaymentRequest) (*proto.Payment, error) {
 	var id, orderID, paymentMethodID int32
 	var status string
-	query := fmt.Sprintf("SELECT * FROM payments WHERE id = %d", payment.Id)
-	err := repo.DB.QueryRow(query).Scan(&id, &orderID, &paymentMethodID, &status)
+	query := fmt.Sprintf("SELECT * FROM payments WHERE order_id = %d", request.Id)
+	err := postgres.DB.QueryRow(query).Scan(&id, &orderID, &paymentMethodID, &status)
 	if err != nil {
 		return nil, err
 	}
 
-	return &paymentPB.Payment{
+	return &proto.Payment{
 		Id:              id,
 		OrderId:         orderID,
 		PaymentMethodId: paymentMethodID,
@@ -75,17 +82,17 @@ func (repo *Postgres) Show(payment *paymentPB.Payment) (*paymentPB.Payment, erro
 	}, err
 }
 
-// ShowByOrderID shows a payment by orderID
-func (repo *Postgres) ShowByOrderID(order *paymentPB.Order) (*paymentPB.Payment, error) {
+// GetOne will get a payment by id
+func (postgres *Postgres) GetOne(request *proto.GetOnePaymentRequest) (*proto.Payment, error) {
 	var id, orderID, paymentMethodID int32
 	var status string
-	query := fmt.Sprintf("SELECT * FROM payments WHERE order_id = %d", order.Id)
-	err := repo.DB.QueryRow(query).Scan(&id, &orderID, &paymentMethodID, &status)
+	query := fmt.Sprintf("SELECT * FROM payments WHERE id = %d", request.Id)
+	err := postgres.DB.QueryRow(query).Scan(&id, &orderID, &paymentMethodID, &status)
 	if err != nil {
 		return nil, err
 	}
 
-	return &paymentPB.Payment{
+	return &proto.Payment{
 		Id:              id,
 		OrderId:         orderID,
 		PaymentMethodId: paymentMethodID,
