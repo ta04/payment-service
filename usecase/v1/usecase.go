@@ -33,6 +33,14 @@ func (usecase *Usecase) GetAll(request *proto.GetAllPaymentsRequest) (*[]*proto.
 
 	var err error
 	payment, err := usecase.Repository.GetAll(request)
+
+	if payment == nil || len(*payment) <= 0 {
+		return nil, &proto.Error{
+			Code:    http.StatusInternalServerError,
+			Message: "no payment found",
+		}
+	}
+
 	if err != nil {
 		return nil, &proto.Error{
 			Code:    http.StatusInternalServerError,
