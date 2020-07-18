@@ -19,7 +19,7 @@ func NewUsecase(repository repository.Repository) *Usecase {
 	}
 }
 
-func (usecase *Usecase) GetAll(request *proto.GetAllPaymentsRequest) ([]*proto.Payment, *proto.Error) {
+func (usecase *Usecase) GetAll(request *proto.GetAllPaymentsRequest) (*[]*proto.Payment, *proto.Error) {
 	if request == nil {
 		return nil, &proto.Error{
 			Code:    http.StatusBadRequest,
@@ -36,7 +36,7 @@ func (usecase *Usecase) GetAll(request *proto.GetAllPaymentsRequest) ([]*proto.P
 	if err != nil {
 		return nil, &proto.Error{
 			Code:    http.StatusInternalServerError,
-			Message: http.StatusText(http.StatusInternalServerError),
+			Message: err.Error(),
 		}
 	}
 
@@ -58,7 +58,7 @@ func (usecase *Usecase) GetOne(request *proto.GetOnePaymentRequest) (*proto.Paym
 		if err != nil {
 			return nil, &proto.Error{
 				Code:    http.StatusInternalServerError,
-				Message: http.StatusText(http.StatusInternalServerError),
+				Message: err.Error(),
 			}
 		}
 	} else {
@@ -75,11 +75,18 @@ func (usecase *Usecase) GetOne(request *proto.GetOnePaymentRequest) (*proto.Paym
 }
 
 func (usecase *Usecase) CreateOne(payment *proto.Payment) (*proto.Payment, *proto.Error) {
+	if payment == nil {
+		return nil, &proto.Error{
+			Code:    http.StatusBadRequest,
+			Message: http.StatusText(http.StatusBadRequest),
+		}
+	}
+
 	payment, err := usecase.Repository.CreateOne(payment)
 	if err != nil {
 		return nil, &proto.Error{
 			Code:    http.StatusInternalServerError,
-			Message: http.StatusText(http.StatusInternalServerError),
+			Message: err.Error(),
 		}
 	}
 
@@ -87,11 +94,18 @@ func (usecase *Usecase) CreateOne(payment *proto.Payment) (*proto.Payment, *prot
 }
 
 func (usecase *Usecase) UpdateOne(payment *proto.Payment) (*proto.Payment, *proto.Error) {
+	if payment == nil {
+		return nil, &proto.Error{
+			Code:    http.StatusBadRequest,
+			Message: http.StatusText(http.StatusBadRequest),
+		}
+	}
+
 	payment, err := usecase.Repository.UpdateOne(payment)
 	if err != nil {
 		return nil, &proto.Error{
 			Code:    http.StatusInternalServerError,
-			Message: http.StatusText(http.StatusInternalServerError),
+			Message: err.Error(),
 		}
 	}
 

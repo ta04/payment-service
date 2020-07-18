@@ -47,7 +47,7 @@ func (handler *Handler) GetAllPayments(ctx context.Context, req *proto.GetAllPay
 		return errors.New(err.Message)
 	}
 
-	res.Payments = payments
+	res.Payments = *payments
 	res.Error = nil
 
 	return nil

@@ -37,7 +37,7 @@ func NewPostgres(db *sql.DB) *Postgres {
 }
 
 // GetAll will get all payments
-func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments []*proto.Payment, err error) {
+func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments *[]*proto.Payment, err error) {
 	var id, orderID, paymentMethodID int32
 	var status string
 
@@ -52,7 +52,7 @@ func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments
 		if err != nil {
 			return nil, err
 		}
-		payment := &proto.Payment{
+		payments := &proto.Payment{
 			Id:              id,
 			OrderId:         orderID,
 			PaymentMethodId: paymentMethodID,
@@ -61,7 +61,7 @@ func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments
 		payments = append(payments, payment)
 	}
 
-	return payments, err
+	return &payments, err
 }
 
 // GetOneByOrderID will get a payment by order id
