@@ -52,6 +52,7 @@ func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments
 		if err != nil {
 			return nil, err
 		}
+
 		payments := &proto.Payment{
 			Id:              id,
 			OrderId:         orderID,

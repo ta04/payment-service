@@ -18,6 +18,7 @@ Dear Programmers,
 package postgres
 
 import (
+	"errors"
 	"fmt"
 
 	paymentPB "github.com/ta04/payment-service/model/proto"
@@ -36,7 +37,16 @@ func (postgres *Postgres) CreateOne(payment *paymentPB.Payment) (*paymentPB.Paym
 func (postgres *Postgres) UpdateOne(payment *paymentPB.Payment) (*paymentPB.Payment, error) {
 	query := fmt.Sprintf("UPDATE payments SET order_id = %d, payment_method_id = %d, status = '%s'"+
 		" WHERE id = %d", payment.OrderId, payment.PaymentMethodId, payment.Status, payment.Id)
-	_, err := postgres.DB.Exec(query)
+	res, err := postgres.DB.Exec(query)
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+
+	if count <= 0 {
+		return nil, errors.New("sql: no rows found")
+	}
 
 	return payment, err
 }
