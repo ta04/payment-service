@@ -27,7 +27,7 @@ import (
 // CreateOne will create a new payment
 func (postgres *Postgres) CreateOne(payment *paymentPB.Payment) (*paymentPB.Payment, error) {
 	query := fmt.Sprintf("INSERT INTO payments (order_id, payment_method_id, status)"+
-		" VALUES (%d, %d, 'unpaid')", payment.OrderId, payment.PaymentMethodId)
+		" VALUES (%d, %d, 'waiting for payment')", payment.OrderId, payment.PaymentMethodId)
 	_, err := postgres.DB.Exec(query)
 
 	return payment, err
@@ -38,6 +38,9 @@ func (postgres *Postgres) UpdateOne(payment *paymentPB.Payment) (*paymentPB.Paym
 	query := fmt.Sprintf("UPDATE payments SET order_id = %d, payment_method_id = %d, status = '%s'"+
 		" WHERE id = %d", payment.OrderId, payment.PaymentMethodId, payment.Status, payment.Id)
 	res, err := postgres.DB.Exec(query)
+	if err != nil {
+		return nil, err
+	}
 
 	count, err := res.RowsAffected()
 	if err != nil {

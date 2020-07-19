@@ -37,9 +37,10 @@ func NewPostgres(db *sql.DB) *Postgres {
 }
 
 // GetAll will get all payments
-func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments *[]*proto.Payment, err error) {
+func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (*[]*proto.Payment, error) {
 	var id, orderID, paymentMethodID int32
 	var status string
+	var payments []*proto.Payment
 
 	query := fmt.Sprintf("SELECT * FROM payments WHERE status = '%s'", request.Status)
 	rows, err := postgres.DB.Query(query)
@@ -53,7 +54,7 @@ func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments
 			return nil, err
 		}
 
-		payments := &proto.Payment{
+		payment := &proto.Payment{
 			Id:              id,
 			OrderId:         orderID,
 			PaymentMethodId: paymentMethodID,
@@ -69,7 +70,8 @@ func (postgres *Postgres) GetAll(request *proto.GetAllPaymentsRequest) (payments
 func (postgres *Postgres) GetOneByOrderID(request *proto.GetOnePaymentRequest) (*proto.Payment, error) {
 	var id, orderID, paymentMethodID int32
 	var status string
-	query := fmt.Sprintf("SELECT * FROM payments WHERE order_id = %d", request.Id)
+
+	query := fmt.Sprintf("SELECT * FROM payments WHERE order_id = %d", request.OrderId)
 	err := postgres.DB.QueryRow(query).Scan(&id, &orderID, &paymentMethodID, &status)
 	if err != nil {
 		return nil, err
@@ -87,6 +89,7 @@ func (postgres *Postgres) GetOneByOrderID(request *proto.GetOnePaymentRequest) (
 func (postgres *Postgres) GetOne(request *proto.GetOnePaymentRequest) (*proto.Payment, error) {
 	var id, orderID, paymentMethodID int32
 	var status string
+
 	query := fmt.Sprintf("SELECT * FROM payments WHERE id = %d", request.Id)
 	err := postgres.DB.QueryRow(query).Scan(&id, &orderID, &paymentMethodID, &status)
 	if err != nil {
